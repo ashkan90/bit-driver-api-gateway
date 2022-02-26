@@ -1,0 +1,13 @@
+# =====================================================================
+# Reverse Proxy configurations
+# =====================================================================
+
+services:
+  - name: "bit-driver-svc-1"
+    target: "127.0.0.1:8090"
+    strategy: "check-auth"
+    path: "/svc-1/"
+  - name: "bit-driver-svc-2"
+    target: "127.0.0.1:8091"
+    strategy: "check-auth"
+    path: "/svc-2/"
