@@ -14,10 +14,14 @@ import (
 	"github.com/ashkan90/bit-driver-api-gateway/proxy/router"
 )
 
+var reset = "\033[0m"
+var yellow = "\033[33m"
+
 func main() {
 	var proxyConfigPath string
 	var proxyConfig = &config.ServiceConfig{}
 	var logger = log.Default()
+	logger.SetPrefix(yellow + "[INFO] " + reset)
 
 	flag.StringVar(&proxyConfigPath, "proxy-services", "", "")
 	flag.Parse()
@@ -29,12 +33,13 @@ func main() {
 	proxyConfig.ImportInto(proxyConfigPath)
 
 	var pRouter = &router.ProxyRouter{
-		Logger:  logger,
+		Logger: logger,
 		Config: proxyConfig,
 	}
 
+	var addr = os.Getenv("PORT")
 	var server = &http.Server{
-		Addr:    ":4050",
+		Addr:    ":" + addr,
 		Handler: pRouter.NewRouter(),
 	}
 
