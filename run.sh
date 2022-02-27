@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go run . --proxy-services=services.yaml
+export PORT=4050 && go run cmd/main.go --proxy-services=services.yaml
