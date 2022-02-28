@@ -19,7 +19,7 @@ var yellow = "\033[33m"
 
 func main() {
 	var proxyConfigPath string
-	var proxyConfig = &config.ServiceConfig{}
+	var proxyConfig = &config.GeneralConfig{}
 	var logger = log.Default()
 	logger.SetPrefix(yellow + "[INFO] " + reset)
 
@@ -38,10 +38,15 @@ func main() {
 	}
 
 	var addr = os.Getenv("PORT")
+	if addr != "" {
+		proxyConfig.Server.Port = addr
+	}
 	var server = &http.Server{
-		Addr:    ":" + addr,
+		Addr:    ":" + proxyConfig.Server.Port,
 		Handler: pRouter.NewRouter(),
 	}
+
+	log.Println("Server started at ", proxyConfig.Server.Port)
 
 	go func() {
 		logger.Fatal(server.ListenAndServe())
