@@ -2,12 +2,17 @@
 # Reverse Proxy configurations
 # =====================================================================
 
+server:
+  port: "8080"
 services:
-  - name: "bit-driver-svc-1"
-    target: "127.0.0.1:8090"
+  - name: "bit-driver-location-svc"
+    target: "localhost:8082"
     strategy: "check-auth"
-    path: "/svc-1/"
-  - name: "bit-driver-svc-2"
-    target: "127.0.0.1:8091"
+    listen: "/location-svc/"
+    path: "/nearest-driver-location"
+
+  - name: "bit-driver-match-svc"
+    target: "localhost:8083"
     strategy: "check-auth"
-    path: "/svc-2/"
+    listen: "/match-svc"
+    path: "/find-nearest"
