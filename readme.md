@@ -14,3 +14,4 @@ _for now authentication middleware/strategy is bypassed manually. to see is it w
 
 #TODO
 - [ ] Unit test
+- [ ] Update readme file
