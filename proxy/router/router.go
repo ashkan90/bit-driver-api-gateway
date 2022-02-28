@@ -12,8 +12,8 @@ import (
 )
 
 type ProxyRouter struct {
-	Logger  *log.Logger
-	Config  *config.ServiceConfig
+	Logger *log.Logger
+	Config *config.GeneralConfig
 }
 
 func (pr *ProxyRouter) NewRouter() *mux.Router {
@@ -27,25 +27,23 @@ func (pr *ProxyRouter) NewRouter() *mux.Router {
 		http.MethodPatch,
 	}
 
-	sv.HandleFunc("/hi", func(writer http.ResponseWriter, r *http.Request) {
-		writer.Write([]byte("asdasd"))
-		writer.WriteHeader(200)
-	})
-
 	for _, service := range pr.Config.Services {
+		pr.Logger.Println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ")
+		pr.Logger.Println("Service name is ", service.Name)
 		pr.Logger.Println("Service target is ", service.Target)
 		pr.Logger.Println("Service path is ", service.Path)
+		pr.Logger.Println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n")
 
 		var proxy = &httputil.ReverseProxy{
-			Director:       handler.NewHandler(service.Target),
+			Director: handler.NewHandler(service.Target, service.Path),
 		}
 		var selectedStrategy = (middleware.Strategy)(service.Strategy)
 		var strategyExecutor = pr.strategySelector(proxy, selectedStrategy)
 
-		sv.PathPrefix(service.Path).HandlerFunc(strategyExecutor).Methods(methods...)
+		sv.PathPrefix(service.Listen).HandlerFunc(strategyExecutor).Methods(methods...)
 
 		//
-		sv.PathPrefix(service.Path).HandlerFunc(middleware.FwdOptions(proxy)).Methods(http.MethodOptions)
+		sv.PathPrefix(service.Listen).HandlerFunc(middleware.FwdOptions(proxy)).Methods(http.MethodOptions)
 	}
 
 	return sv
