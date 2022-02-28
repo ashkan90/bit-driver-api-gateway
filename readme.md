@@ -21,6 +21,24 @@ docker build -t bit-driver-api-gateway .
 docker run -p 4050:8080 bit-driver-api-gateway
 ```
 
+## Endpoints
+
+```console
+GET /match-svc/find-nearest/
+GET /location-svc/nearest-driver-location/
+```
+
+## Example Usages
+```shell
+curl --location --request GET 'http://localhost:4050/match-svc/find-nearest/' \
+--header 'Authorization: Bearer authenticated: true' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "longitude": 40.94289771,
+    "latitude": 29.0390297
+}'
+```
+
 #TODO
 - [ ] Unit test
 - [ ] Circuit-breaker
