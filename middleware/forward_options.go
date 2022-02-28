@@ -6,7 +6,7 @@ import (
 )
 
 func FwdOptions(reverse *httputil.ReverseProxy) http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		reverse.ServeHTTP(w, r)
 	}
 }

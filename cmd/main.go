@@ -3,15 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/ashkan90/bit-driver-api-gateway/proxy/config"
+	"github.com/ashkan90/bit-driver-api-gateway/config"
+	"github.com/ashkan90/bit-driver-api-gateway/router"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/ashkan90/bit-driver-api-gateway/proxy/router"
 )
 
 var reset = "\033[0m"

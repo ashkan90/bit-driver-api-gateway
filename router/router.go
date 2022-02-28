@@ -1,13 +1,13 @@
 package router
 
 import (
-	"github.com/ashkan90/bit-driver-api-gateway/proxy/config"
-	"github.com/ashkan90/bit-driver-api-gateway/proxy/handler"
+	"github.com/ashkan90/bit-driver-api-gateway/config"
+	"github.com/ashkan90/bit-driver-api-gateway/handler"
+	middleware2 "github.com/ashkan90/bit-driver-api-gateway/middleware"
 	"log"
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/ashkan90/bit-driver-api-gateway/proxy/middleware"
 	"github.com/gorilla/mux"
 )
 
@@ -37,23 +37,23 @@ func (pr *ProxyRouter) NewRouter() *mux.Router {
 		var proxy = &httputil.ReverseProxy{
 			Director: handler.NewHandler(service.Target, service.Path),
 		}
-		var selectedStrategy = (middleware.Strategy)(service.Strategy)
+		var selectedStrategy = (middleware2.Strategy)(service.Strategy)
 		var strategyExecutor = pr.strategySelector(proxy, selectedStrategy)
 
 		sv.PathPrefix(service.Listen).HandlerFunc(strategyExecutor).Methods(methods...)
 
 		//
-		sv.PathPrefix(service.Listen).HandlerFunc(middleware.FwdOptions(proxy)).Methods(http.MethodOptions)
+		sv.PathPrefix(service.Listen).HandlerFunc(middleware2.FwdOptions(proxy)).Methods(http.MethodOptions)
 	}
 
 	return sv
 }
 
-func (*ProxyRouter) strategySelector(proxy *httputil.ReverseProxy, strategy middleware.Strategy) http.HandlerFunc {
+func (*ProxyRouter) strategySelector(proxy *httputil.ReverseProxy, strategy middleware2.Strategy) http.HandlerFunc {
 	switch strategy {
-	case middleware.StrategyCheckAuth:
-		return middleware.CheckAuth(proxy)
+	case middleware2.StrategyCheckAuth:
+		return middleware2.CheckAuth(proxy)
 	default:
-		return middleware.FwdOptions(proxy)
+		return middleware2.FwdOptions(proxy)
 	}
 }
