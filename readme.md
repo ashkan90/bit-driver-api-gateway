@@ -1,17 +1,26 @@
+<h1 align="center">Bi Taksi Driver API Gateway</h1>
+
+![example workflow](https://github.com/ashkan90/bit-driver-api-gateway/actions/workflows/github-actions.yml/badge.svg) _[badge_soon]_
+
+> The Gateway project takes entire traffic onto it. It handles some basic logics such as Authorization then proxies the incoming request to related service. 
+
+## Introduction
+
+The Gateway project does not implement complete JWT authorization. It has super-simple logic to handle authorization. <br>
+Gateway only checks your 'Authorization' header and service waiting it to be 'authenticated: true' otherwise it will block customer request. <br>
+Gateway does not implement Application Load Balancer. It leaves Load balancer things to server/cloud provider.  
+
 ## Test purpose
-To test the gateway, you should run firstly;
-```shell
-sh run.sh
-```
+To test the gateway, you should run 'driver-location-service' and 'driver-matching-service' firstly;<br>
+[driver-location-service](https://github.com/ashkan90/bit-driver-location-service) <br>
+[driver-match-service](https://github.com/ashkan90/bit-driver-matching-service)
 
-then start mock services to test the gateway.
+then start the gateway to check everything is ok.
 ```shell
-cd mock/svc-1 && go run .
-cd mock/svc-2 && go run .
+docker build -t bit-driver-api-gateway .
+docker run -p 4050:8080 bit-driver-api-gateway
 ```
-
-_for now authentication middleware/strategy is bypassed manually. to see is it working you can uncomment lines in `proxy/middleware/check_auth.go` file_
 
 #TODO
 - [ ] Unit test
-- [ ] Update readme file
+- [ ] Circuit-breaker
