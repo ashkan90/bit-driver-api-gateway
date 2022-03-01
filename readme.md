@@ -1,6 +1,6 @@
 <h1 align="center">Bi Taksi Driver API Gateway</h1>
 
-![example workflow](https://github.com/ashkan90/bit-driver-api-gateway/actions/workflows/main.yml/badge.svg) _[badge_soon]_
+![example workflow](https://github.com/ashkan90/bit-driver-api-gateway/actions/workflows/main.yml/badge.svg)
 
 > The Gateway project takes entire traffic onto it. It handles some basic logics such as Authorization then proxies the incoming request to related service. 
 
