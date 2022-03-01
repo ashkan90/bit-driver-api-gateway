@@ -39,6 +39,6 @@ curl --location --request GET 'http://localhost:4050/match-svc/find-nearest/' \
 }'
 ```
 
-#TODO
-- [ ] Unit test
+# TODO
+- [x] Unit test
 - [ ] Circuit-breaker
