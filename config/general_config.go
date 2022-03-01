@@ -23,13 +23,19 @@ type Service struct {
 	Path     string `yaml:"path,omitempty" json:"path,omitempty"`
 }
 
-func (c *GeneralConfig) ImportInto(fPath string) {
+func NewConfig(fPath string) (GeneralConfig, error) {
+	var conf GeneralConfig
 	var fName, _ = filepath.Abs(fPath)
 	var yamlFile, err = ioutil.ReadFile(fName)
 
 	if err != nil {
-		panic(err)
+		return GeneralConfig{}, err
 	}
 
-	err = yaml.Unmarshal(yamlFile, c)
+	err = yaml.Unmarshal(yamlFile, &conf)
+	if err != nil {
+		return GeneralConfig{}, err
+	}
+
+	return conf, nil
 }

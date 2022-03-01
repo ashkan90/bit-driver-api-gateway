@@ -1,12 +1,13 @@
 package router
 
 import (
-	"github.com/ashkan90/bit-driver-api-gateway/config"
-	"github.com/ashkan90/bit-driver-api-gateway/handler"
-	middleware2 "github.com/ashkan90/bit-driver-api-gateway/middleware"
 	"log"
 	"net/http"
 	"net/http/httputil"
+
+	"github.com/ashkan90/bit-driver-api-gateway/config"
+	"github.com/ashkan90/bit-driver-api-gateway/handler"
+	middleware_strategy "github.com/ashkan90/bit-driver-api-gateway/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -32,28 +33,33 @@ func (pr *ProxyRouter) NewRouter() *mux.Router {
 		pr.Logger.Println("Service name is ", service.Name)
 		pr.Logger.Println("Service target is ", service.Target)
 		pr.Logger.Println("Service path is ", service.Path)
-		pr.Logger.Println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n")
+		pr.Logger.Println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ")
+		pr.Logger.Println()
 
 		var proxy = &httputil.ReverseProxy{
 			Director: handler.NewHandler(service.Target, service.Path),
 		}
-		var selectedStrategy = (middleware2.Strategy)(service.Strategy)
+		var selectedStrategy = (middleware_strategy.Strategy)(service.Strategy)
 		var strategyExecutor = pr.strategySelector(proxy, selectedStrategy)
 
-		sv.PathPrefix(service.Listen).HandlerFunc(strategyExecutor).Methods(methods...)
+		sv.PathPrefix(service.Listen).HandlerFunc(strategyExecutor).Methods(methods...).Name(service.Path + " " + service.Strategy)
 
-		//
-		sv.PathPrefix(service.Listen).HandlerFunc(middleware2.FwdOptions(proxy)).Methods(http.MethodOptions)
+		// Some browsers can send a request with OPTION method
+		// and in other case It'll be blocked cause of CheckAuth strategy
+		// to bypass that, we implemented a Forward strategy tho.
+		sv.PathPrefix(service.Listen).HandlerFunc(middleware_strategy.FwdOptions(proxy)).Methods(http.MethodOptions).Name(service.Path + " fwd")
 	}
 
 	return sv
 }
 
-func (*ProxyRouter) strategySelector(proxy *httputil.ReverseProxy, strategy middleware2.Strategy) http.HandlerFunc {
+func (*ProxyRouter) strategySelector(proxy *httputil.ReverseProxy, strategy middleware_strategy.Strategy) http.HandlerFunc {
 	switch strategy {
-	case middleware2.StrategyCheckAuth:
-		return middleware2.CheckAuth(proxy)
+	case middleware_strategy.StrategyCheckAuth:
+		return middleware_strategy.CheckAuth(proxy)
+	case middleware_strategy.StrategyForwardDirectly:
+		return middleware_strategy.FwdOptions(proxy)
 	default:
-		return middleware2.FwdOptions(proxy)
+		return middleware_strategy.FwdOptions(proxy)
 	}
 }

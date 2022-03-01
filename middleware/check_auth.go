@@ -12,7 +12,7 @@ func CheckAuth(reverse *httputil.ReverseProxy) http.HandlerFunc {
 
 		if header != "Bearer authenticated: true" {
 			w.WriteHeader(http.StatusForbidden)
-			io.WriteString(w, "Auth needed\n")
+			_, _ = io.WriteString(w, "Auth needed")
 			return
 		}
 

@@ -18,7 +18,6 @@ var yellow = "\033[33m"
 
 func main() {
 	var proxyConfigPath string
-	var proxyConfig = &config.GeneralConfig{}
 	var logger = log.Default()
 	logger.SetPrefix(yellow + "[INFO] " + reset)
 
@@ -29,11 +28,14 @@ func main() {
 		panic("Proxy services has not been set.")
 	}
 
-	proxyConfig.ImportInto(proxyConfigPath)
+	var proxyConfig, err = config.NewConfig(proxyConfigPath)
+	if err != nil {
+		panic(err)
+	}
 
 	var pRouter = &router.ProxyRouter{
 		Logger: logger,
-		Config: proxyConfig,
+		Config: &proxyConfig,
 	}
 
 	var addr = os.Getenv("PORT")
