@@ -6,6 +6,8 @@ import (
 	"net/http/httputil"
 )
 
+// CheckAuth checks the request header and determines
+// this request is allowed to proxy. Works before proxy.
 func CheckAuth(reverse *httputil.ReverseProxy) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var header = r.Header.Get("Authorization")

@@ -23,6 +23,7 @@ type Service struct {
 	Path     string `yaml:"path,omitempty" json:"path,omitempty"`
 }
 
+// NewConfig creates a new config struct with given yaml.
 func NewConfig(fPath string) (GeneralConfig, error) {
 	var conf GeneralConfig
 	var fName, _ = filepath.Abs(fPath)

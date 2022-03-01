@@ -17,6 +17,7 @@ type ProxyRouter struct {
 	Config *config.GeneralConfig
 }
 
+// NewRouter declares all given services as proxy connection.
 func (pr *ProxyRouter) NewRouter() *mux.Router {
 	pr.Logger.Println("Proxy router has been registered...")
 	var sv = mux.NewRouter()
@@ -53,6 +54,7 @@ func (pr *ProxyRouter) NewRouter() *mux.Router {
 	return sv
 }
 
+// strategySelector determines which strategy will be executed with given parameter
 func (*ProxyRouter) strategySelector(proxy *httputil.ReverseProxy, strategy middleware_strategy.Strategy) http.HandlerFunc {
 	switch strategy {
 	case middleware_strategy.StrategyCheckAuth:
